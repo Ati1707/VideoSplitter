@@ -11,7 +11,8 @@ def select_file():
     root = tk.Tk()
     root.withdraw()  # Hide the root window
     file_path = filedialog.askopenfilename(title="Select a video file",
-                                           filetypes=[("Video files", "*.mp4;*.mkv;*.avi;*.mov")])
+                                           filetypes=[("Video files", "*.mp4;*.mkv;*.avi;*.mov;*.flv;*.wmv;*.webm"
+                                                                      ";*.mpeg;*.mpg;*.3gp")])
     return file_path
 
 
