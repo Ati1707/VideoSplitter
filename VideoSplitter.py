@@ -6,6 +6,7 @@ from tkinter import filedialog, messagebox
 
 import Downloader
 
+
 def select_file():
     """Open a file dialog to select a video file."""
     print("Pick a video file...")
@@ -18,6 +19,7 @@ def select_file():
     )
     return file_path
 
+
 def select_directory():
     """Open a directory dialog to choose a directory."""
     root = tk.Tk()
@@ -25,6 +27,7 @@ def select_directory():
     root.withdraw()  # Hide the root window
     directory_path = filedialog.askdirectory(parent=root, title="Select a directory")
     return directory_path
+
 
 def get_user_choice():
     """Get the user's choice for splitting the video."""
@@ -34,6 +37,7 @@ def get_user_choice():
     choice = input("Enter 1 or 2: ").strip()
     return choice
 
+
 def get_save_location_choice():
     """Get the user's choice for saving location."""
     print("\nChoose where to save the output files:")
@@ -42,17 +46,20 @@ def get_save_location_choice():
     choice = input("Enter 1 or 2: ").strip()
     return choice
 
+
 def get_video_name(video_path):
     """Extract the base name and extension from the video path."""
     video_name_base = os.path.splitext(os.path.basename(video_path))[0]
     video_name_extension = os.path.splitext(video_path)[1].lstrip('.')
     return video_name_base, video_name_extension
 
+
 def create_output_folder(output_dir, video_name_base):
     """Create a folder named after the video with '_split' appended."""
     split_folder = os.path.join(output_dir, f"{video_name_base}_split")
     os.makedirs(split_folder, exist_ok=True)
     return split_folder
+
 
 def split_video_by_duration(video_path, duration, output_dir):
     """Split the video by duration using ffmpeg."""
@@ -66,6 +73,7 @@ def split_video_by_duration(video_path, duration, output_dir):
     ]
     subprocess.run(command)
     print(f"Video split into parts by duration {duration} and saved to '{output_dir}' successfully.")
+
 
 def split_video_into_parts(video_path, parts, output_dir):
     """Split the video into specified number of parts using ffmpeg and ffprobe."""
@@ -89,6 +97,7 @@ def split_video_into_parts(video_path, parts, output_dir):
     ]
     subprocess.run(command)
     print(f"Video split into {parts} parts and saved to '{output_dir}' successfully.")
+
 
 def main():
     Downloader.check_download_ffmpeg()
@@ -123,6 +132,7 @@ def main():
     else:
         print("Invalid choice. Exiting.")
         return
+
 
 if __name__ == "__main__":
     main()
