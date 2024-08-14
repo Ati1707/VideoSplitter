@@ -16,23 +16,32 @@ def is_ffmpeg_installed():
         return False
 
 
-def is_ffmpeg_update_available():
-    result = subprocess.run(['ffmpeg', '-version'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True,
-                            text=True)
+def get_local_ffmpeg_version():
+    result = subprocess.run(['ffmpeg', '-version'], stdout=subprocess.PIPE, text=True, check=True)
     version_line = result.stdout.splitlines()[0]
     match = re.search(r'ffmpeg version (\d+\.\d+\.\d+)', version_line)
-    local_version = match.group(1)
-    local_version = int(local_version.replace('.', ''))
+    return match.group(1)
+
+
+def get_latest_ffmpeg_version():
     url = 'https://www.gyan.dev/ffmpeg/builds/release-version'
     response = urllib.request.urlopen(url)
-    latest_version = response.read().decode('utf-8')
-    latest_version = int(latest_version.replace('.', ''))
-    if latest_version == local_version:
+    return response.read().decode('utf-8')
+
+
+def delete_existing_ffmpeg():
+    for exe in ['ffmpeg.exe', 'ffprobe.exe']:
+        if os.path.exists(exe):
+            os.remove(exe)
+
+
+def is_ffmpeg_update_available():
+    local_version = get_local_ffmpeg_version().replace('.', '')
+    latest_version = get_latest_ffmpeg_version().replace('.', '')
+
+    if int(latest_version) > int(local_version):
         print("Update available!")
-        if os.path.exists('ffmpeg.exe'):
-            os.remove('ffmpeg.exe')
-            if os.path.exists('ffprobe.exe'):
-                os.remove('ffprobe.exe')
+        delete_existing_ffmpeg()
         download_ffmpeg()
 
 
