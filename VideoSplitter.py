@@ -12,7 +12,8 @@ def select_file():
     print("Pick a video file...")
     time.sleep(2)  # Delay for 2 seconds
     root = tk.Tk()
-    root.withdraw()  # Hide the root window
+    root.wm_attributes('-topmost', 1)
+    root.withdraw()
     file_path = filedialog.askopenfilename(
         title="Select a video file",
         filetypes=[("Video files", "*.mp4;*.mkv;*.avi;*.mov;*.flv;*.wmv;*.webm;*.mpeg;*.mpg;*.3gp")]
@@ -24,7 +25,7 @@ def select_directory():
     """Open a directory dialog to choose a directory."""
     root = tk.Tk()
     root.wm_attributes('-topmost', 1)
-    root.withdraw()  # Hide the root window
+    root.withdraw()
     directory_path = filedialog.askdirectory(parent=root, title="Select a directory")
     return directory_path
 

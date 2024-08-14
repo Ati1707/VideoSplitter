@@ -3,6 +3,8 @@ import subprocess
 import urllib.request
 import zipfile
 import shutil
+import re
+import time
 
 
 def is_ffmpeg_installed():
@@ -14,6 +16,26 @@ def is_ffmpeg_installed():
         return False
 
 
+def is_ffmpeg_update_available():
+    result = subprocess.run(['ffmpeg', '-version'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True,
+                            text=True)
+    version_line = result.stdout.splitlines()[0]
+    match = re.search(r'ffmpeg version (\d+\.\d+\.\d+)', version_line)
+    local_version = match.group(1)
+    local_version = int(local_version.replace('.', ''))
+    url = 'https://www.gyan.dev/ffmpeg/builds/release-version'
+    response = urllib.request.urlopen(url)
+    latest_version = response.read().decode('utf-8')
+    latest_version = int(latest_version.replace('.', ''))
+    if latest_version == local_version:
+        print("Update available!")
+        if os.path.exists('ffmpeg.exe'):
+            os.remove('ffmpeg.exe')
+            if os.path.exists('ffprobe.exe'):
+                os.remove('ffprobe.exe')
+        download_ffmpeg()
+
+
 def download_ffmpeg():
     """Download the FFmpeg executable for Windows."""
     url = 'https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip'
@@ -21,7 +43,7 @@ def download_ffmpeg():
     print("Downloading FFmpeg...")
     urllib.request.urlretrieve(url, output_path)
     print("Download complete.")
-    return output_path
+    extract_ffmpeg(output_path)
 
 
 def extract_ffmpeg(zip_path, extract_to='ffmpeg'):
@@ -29,7 +51,9 @@ def extract_ffmpeg(zip_path, extract_to='ffmpeg'):
     with zipfile.ZipFile(zip_path, 'r') as zip_ref:
         zip_ref.extractall(extract_to)
     print("Extraction complete.")
+    time.sleep(2)
     os.remove(zip_path)
+    move_ffmpeg_binaries()
 
 
 def move_ffmpeg_binaries(extract_to='ffmpeg'):
@@ -45,9 +69,10 @@ def move_ffmpeg_binaries(extract_to='ffmpeg'):
 def check_download_ffmpeg():
     if is_ffmpeg_installed():
         print("FFmpeg is already installed.")
+        if os.path.exists('ffmpeg.exe'):
+            print("Checking if newer version is available...")
+            is_ffmpeg_update_available()
     else:
         print("FFmpeg is not installed.")
-        zip_path = download_ffmpeg()
-        extract_ffmpeg(zip_path)
-        move_ffmpeg_binaries()
+        download_ffmpeg()
         print("FFmpeg installation complete. FFmpeg binaries have been moved to the main directory.")
