@@ -84,4 +84,4 @@ def check_download_ffmpeg():
     else:
         print("FFmpeg is not installed.")
         download_ffmpeg()
-        print("FFmpeg installation complete. FFmpeg binaries have been moved to the main directory.")
+        print("FFmpeg installation complete.")
